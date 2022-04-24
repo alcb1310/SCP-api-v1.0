@@ -38,12 +38,16 @@ class Obra
     #[ORM\OneToMany(mappedBy: 'obra', targetEntity: ActualHistorico::class)]
     private $actualHistoricos;
 
+    #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Control::class)]
+    private $controls;
+
     public function __construct()
     {
         $this->presupuestos = new ArrayCollection();
         $this->facturas = new ArrayCollection();
         $this->actuals = new ArrayCollection();
         $this->actualHistoricos = new ArrayCollection();
+        $this->controls = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -201,6 +205,36 @@ class Obra
             // set the owning side to null (unless already changed)
             if ($actualHistorico->getObra() === $this) {
                 $actualHistorico->setObra(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Control>
+     */
+    public function getControls(): Collection
+    {
+        return $this->controls;
+    }
+
+    public function addControl(Control $control): self
+    {
+        if (!$this->controls->contains($control)) {
+            $this->controls[] = $control;
+            $control->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removeControl(Control $control): self
+    {
+        if ($this->controls->removeElement($control)) {
+            // set the owning side to null (unless already changed)
+            if ($control->getObra() === $this) {
+                $control->setObra(null);
             }
         }
 
