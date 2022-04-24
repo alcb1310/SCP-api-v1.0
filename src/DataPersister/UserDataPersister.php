@@ -28,7 +28,7 @@ class UserDataPersister implements DataPersisterInterface
      *
      * @param  User $data
      */
-    public function persist($data)
+    public function persist($data): User
     {
         if ($data->getPlainPassword()){
             $hashedPassword = $this->passwordHasherInterface->hashPassword($data, $data->getPlainPassword());
@@ -38,6 +38,8 @@ class UserDataPersister implements DataPersisterInterface
         }
         $this->em->persist($data);
         $this->em->flush();
+
+        return $data;
     }
 
     public function remove($data)

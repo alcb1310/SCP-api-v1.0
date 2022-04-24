@@ -14,7 +14,7 @@
         placeholder="Enter email"
       />
     </div>
-    <div class="form-group">
+    <div class="form-group mt-3">
       <label for="exampleInputPassword1">Password</label>
       <input
         type="password"
@@ -24,13 +24,9 @@
         placeholder="Password"
       />
     </div>
-    <div class="form-check">
-      <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-      <label class="form-check-label" for="exampleCheck1">I like cheese</label>
-    </div>
     <button
       type="submit"
-      class="btn btn-primary"
+      class="btn btn-primary mt-3"
       v-bind:class="{ disabled: isLoading }"
     >
       Log in

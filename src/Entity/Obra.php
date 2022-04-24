@@ -15,8 +15,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ObraRepository::class)]
 #[ApiResource(
+    security: 'is_granted("ROLE_USER")',
     collectionOperations: [
-        'get',
+        'get' ,
         'post'
     ],
     itemOperations: [

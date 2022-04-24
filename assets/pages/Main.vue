@@ -6,10 +6,8 @@
         style="box-shadow: 0 3px 7px 1px rgba(0, 0, 0, 0.06)"
       >
         <div class="col py-5">
-          <h1 class="text-center">CheeseWhiz</h1>
-          <h6 class="text-center">
-            Because someone wants your left-over cheese.
-          </h6>
+          <h1 class="text-center">Incogres</h1>
+          <h6 class="text-center">Sistema Control Presupuestario</h6>
         </div>
       </div>
       <div class="row no-gutters">
