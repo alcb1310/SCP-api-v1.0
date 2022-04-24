@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ObraRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ObraRepository::class)]
@@ -23,6 +25,14 @@ class Obra
 
     #[ORM\Column(type: 'boolean')]
     private $activo;
+
+    #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Presupuesto::class)]
+    private $presupuestos;
+
+    public function __construct()
+    {
+        $this->presupuestos = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -61,6 +71,36 @@ class Obra
     public function setActivo(bool $activo): self
     {
         $this->activo = $activo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Presupuesto>
+     */
+    public function getPresupuestos(): Collection
+    {
+        return $this->presupuestos;
+    }
+
+    public function addPresupuesto(Presupuesto $presupuesto): self
+    {
+        if (!$this->presupuestos->contains($presupuesto)) {
+            $this->presupuestos[] = $presupuesto;
+            $presupuesto->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removePresupuesto(Presupuesto $presupuesto): self
+    {
+        if ($this->presupuestos->removeElement($presupuesto)) {
+            // set the owning side to null (unless already changed)
+            if ($presupuesto->getObra() === $this) {
+                $presupuesto->setObra(null);
+            }
+        }
 
         return $this;
     }

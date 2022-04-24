@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PartidaRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PartidaRepository::class)]
@@ -29,6 +31,14 @@ class Partida
 
     #[ORM\ManyToOne(targetEntity: self::class)]
     private $padre;
+
+    #[ORM\OneToMany(mappedBy: 'partida', targetEntity: Presupuesto::class)]
+    private $presupuestos;
+
+    public function __construct()
+    {
+        $this->presupuestos = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -91,6 +101,36 @@ class Partida
     public function setPadre(?self $padre): self
     {
         $this->padre = $padre;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Presupuesto>
+     */
+    public function getPresupuestos(): Collection
+    {
+        return $this->presupuestos;
+    }
+
+    public function addPresupuesto(Presupuesto $presupuesto): self
+    {
+        if (!$this->presupuestos->contains($presupuesto)) {
+            $this->presupuestos[] = $presupuesto;
+            $presupuesto->setPartida($this);
+        }
+
+        return $this;
+    }
+
+    public function removePresupuesto(Presupuesto $presupuesto): self
+    {
+        if ($this->presupuestos->removeElement($presupuesto)) {
+            // set the owning side to null (unless already changed)
+            if ($presupuesto->getPartida() === $this) {
+                $presupuesto->setPartida(null);
+            }
+        }
 
         return $this;
     }
