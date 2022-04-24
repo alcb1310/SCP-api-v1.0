@@ -73,6 +73,7 @@ export default {
             this.error = error.response.data.error;
           } else {
             this.error = "Unknown error";
+            console.error(error);
           }
         })
         .finally(() => {

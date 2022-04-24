@@ -5,16 +5,22 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ApiResource(
     collectionOperations: [
         'get',
-        'post'
+        'post' => [
+            'validation_groups' => [
+                'Default', 'create'
+            ]
+        ]
     ],
     itemOperations:[
         'get',
@@ -39,15 +45,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'user:read',
         'user:write'
     ])]
+    #[Assert\NotBlank(
+        message: 'Ingrese un nombre de usuario'
+    )]
+    #[Assert\Length(
+        min: 5,
+        minMessage: 'El nombre de usuario debe tener al menos 5 caracteres'
+    )]
     private $username;
 
     #[ORM\Column(type: 'json')]
-    private $roles = [];
-
-    #[ORM\Column(type: 'string')]
     #[Groups([
         'user:write'
     ])]
+    private $roles = [];
+
+    #[ORM\Column(type: 'string')]
     private $password;
 
     #[ORM\Column(type: 'string', length: 255)]
@@ -55,7 +68,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         'user:read',
         'user:write'
     ])]
+    #[Assert\NotBlank(
+        message: 'Ingrese el nombre del usuario'
+    )]
     private $nombre;
+
+    #[Groups([
+        'user:write'
+    ])]
+    #[SerializedName('password')]
+    #[Assert\NotBlank(
+        message: 'Ingrese una contraseña',
+        groups: ['create']
+    )]
+    #[Assert\Length(
+        min: 5,
+        minMessage: 'Contraseña debe ser de al menos 5 caracteres'
+    )]
+    private $plainPassword;
 
     public function getId(): ?int
     {
@@ -124,7 +154,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     public function getNombre(): ?string
@@ -135,6 +165,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNombre(string $nombre): self
     {
         $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
