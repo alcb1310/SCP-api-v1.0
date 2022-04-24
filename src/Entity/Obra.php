@@ -35,11 +35,15 @@ class Obra
     #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Actual::class)]
     private $actuals;
 
+    #[ORM\OneToMany(mappedBy: 'obra', targetEntity: ActualHistorico::class)]
+    private $actualHistoricos;
+
     public function __construct()
     {
         $this->presupuestos = new ArrayCollection();
         $this->facturas = new ArrayCollection();
         $this->actuals = new ArrayCollection();
+        $this->actualHistoricos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -167,6 +171,36 @@ class Obra
             // set the owning side to null (unless already changed)
             if ($actual->getObra() === $this) {
                 $actual->setObra(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActualHistorico>
+     */
+    public function getActualHistoricos(): Collection
+    {
+        return $this->actualHistoricos;
+    }
+
+    public function addActualHistorico(ActualHistorico $actualHistorico): self
+    {
+        if (!$this->actualHistoricos->contains($actualHistorico)) {
+            $this->actualHistoricos[] = $actualHistorico;
+            $actualHistorico->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActualHistorico(ActualHistorico $actualHistorico): self
+    {
+        if ($this->actualHistoricos->removeElement($actualHistorico)) {
+            // set the owning side to null (unless already changed)
+            if ($actualHistorico->getObra() === $this) {
+                $actualHistorico->setObra(null);
             }
         }
 
