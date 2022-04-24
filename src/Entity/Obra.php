@@ -2,45 +2,276 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Repository\ObraRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Obra
- *
- * @ORM\Table(name="obra", uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_2EEE6DBD3A909126", columns={"nombre"})})
- * @ORM\Entity
- */
+#[ORM\Entity(repositoryClass: ObraRepository::class)]
+#[ApiResource]
 class Obra
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer", nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="nombre", type="string", length=255, nullable=false)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $nombre;
 
-    /**
-     * @var int|null
-     *
-     * @ORM\Column(name="casas", type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer')]
     private $casas;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="activo", type="boolean", nullable=false)
-     */
+    #[ORM\Column(type: 'boolean')]
     private $activo;
 
+    #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Presupuesto::class)]
+    private $presupuestos;
 
+    #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Factura::class)]
+    private $facturas;
+
+    #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Actual::class)]
+    private $actuals;
+
+    #[ORM\OneToMany(mappedBy: 'obra', targetEntity: ActualHistorico::class)]
+    private $actualHistoricos;
+
+    #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Control::class)]
+    private $controls;
+
+    #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Flujo::class)]
+    private $flujos;
+
+    public function __construct()
+    {
+        $this->presupuestos = new ArrayCollection();
+        $this->facturas = new ArrayCollection();
+        $this->actuals = new ArrayCollection();
+        $this->actualHistoricos = new ArrayCollection();
+        $this->controls = new ArrayCollection();
+        $this->flujos = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getNombre(): ?string
+    {
+        return $this->nombre;
+    }
+
+    public function setNombre(string $nombre): self
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    public function getCasas(): ?int
+    {
+        return $this->casas;
+    }
+
+    public function setCasas(int $casas): self
+    {
+        $this->casas = $casas;
+
+        return $this;
+    }
+
+    public function getActivo(): ?bool
+    {
+        return $this->activo;
+    }
+
+    public function setActivo(bool $activo): self
+    {
+        $this->activo = $activo;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Presupuesto>
+     */
+    public function getPresupuestos(): Collection
+    {
+        return $this->presupuestos;
+    }
+
+    public function addPresupuesto(Presupuesto $presupuesto): self
+    {
+        if (!$this->presupuestos->contains($presupuesto)) {
+            $this->presupuestos[] = $presupuesto;
+            $presupuesto->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removePresupuesto(Presupuesto $presupuesto): self
+    {
+        if ($this->presupuestos->removeElement($presupuesto)) {
+            // set the owning side to null (unless already changed)
+            if ($presupuesto->getObra() === $this) {
+                $presupuesto->setObra(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Factura>
+     */
+    public function getFacturas(): Collection
+    {
+        return $this->facturas;
+    }
+
+    public function addFactura(Factura $factura): self
+    {
+        if (!$this->facturas->contains($factura)) {
+            $this->facturas[] = $factura;
+            $factura->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFactura(Factura $factura): self
+    {
+        if ($this->facturas->removeElement($factura)) {
+            // set the owning side to null (unless already changed)
+            if ($factura->getObra() === $this) {
+                $factura->setObra(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Actual>
+     */
+    public function getActuals(): Collection
+    {
+        return $this->actuals;
+    }
+
+    public function addActual(Actual $actual): self
+    {
+        if (!$this->actuals->contains($actual)) {
+            $this->actuals[] = $actual;
+            $actual->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActual(Actual $actual): self
+    {
+        if ($this->actuals->removeElement($actual)) {
+            // set the owning side to null (unless already changed)
+            if ($actual->getObra() === $this) {
+                $actual->setObra(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ActualHistorico>
+     */
+    public function getActualHistoricos(): Collection
+    {
+        return $this->actualHistoricos;
+    }
+
+    public function addActualHistorico(ActualHistorico $actualHistorico): self
+    {
+        if (!$this->actualHistoricos->contains($actualHistorico)) {
+            $this->actualHistoricos[] = $actualHistorico;
+            $actualHistorico->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActualHistorico(ActualHistorico $actualHistorico): self
+    {
+        if ($this->actualHistoricos->removeElement($actualHistorico)) {
+            // set the owning side to null (unless already changed)
+            if ($actualHistorico->getObra() === $this) {
+                $actualHistorico->setObra(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Control>
+     */
+    public function getControls(): Collection
+    {
+        return $this->controls;
+    }
+
+    public function addControl(Control $control): self
+    {
+        if (!$this->controls->contains($control)) {
+            $this->controls[] = $control;
+            $control->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removeControl(Control $control): self
+    {
+        if ($this->controls->removeElement($control)) {
+            // set the owning side to null (unless already changed)
+            if ($control->getObra() === $this) {
+                $control->setObra(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Flujo>
+     */
+    public function getFlujos(): Collection
+    {
+        return $this->flujos;
+    }
+
+    public function addFlujo(Flujo $flujo): self
+    {
+        if (!$this->flujos->contains($flujo)) {
+            $this->flujos[] = $flujo;
+            $flujo->setObra($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFlujo(Flujo $flujo): self
+    {
+        if ($this->flujos->removeElement($flujo)) {
+            // set the owning side to null (unless already changed)
+            if ($flujo->getObra() === $this) {
+                $flujo->setObra(null);
+            }
+        }
+
+        return $this;
+    }
 }
