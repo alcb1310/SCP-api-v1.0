@@ -18,11 +18,15 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ApiResource(
     collectionOperations:[
         'get',
-        'post'
+        'post' => [
+            'security' => 'is_granted("ROLE_USER")'
+        ]
     ],
     itemOperations: [
         'get',
-        'put'
+        'put' => [
+            'security' => 'is_granted("ROLE_USER")'
+        ]
     ],
     normalizationContext:[
         'groups' => ['partida:read']
