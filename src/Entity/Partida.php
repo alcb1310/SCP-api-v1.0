@@ -27,6 +27,9 @@ class Partida
     #[ORM\Column(type: 'integer')]
     private $nivel;
 
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    private $padre;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -76,6 +79,18 @@ class Partida
     public function setNivel(int $nivel): self
     {
         $this->nivel = $nivel;
+
+        return $this;
+    }
+
+    public function getPadre(): ?self
+    {
+        return $this->padre;
+    }
+
+    public function setPadre(?self $padre): self
+    {
+        $this->padre = $padre;
 
         return $this;
     }
