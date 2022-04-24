@@ -38,10 +38,14 @@ class Partida
     #[ORM\OneToMany(mappedBy: 'partida', targetEntity: DetalleFactura::class)]
     private $detalleFacturas;
 
+    #[ORM\OneToMany(mappedBy: 'partida', targetEntity: Actual::class)]
+    private $actuals;
+
     public function __construct()
     {
         $this->presupuestos = new ArrayCollection();
         $this->detalleFacturas = new ArrayCollection();
+        $this->actuals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,6 +167,36 @@ class Partida
             // set the owning side to null (unless already changed)
             if ($detalleFactura->getPartida() === $this) {
                 $detalleFactura->setPartida(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Actual>
+     */
+    public function getActuals(): Collection
+    {
+        return $this->actuals;
+    }
+
+    public function addActual(Actual $actual): self
+    {
+        if (!$this->actuals->contains($actual)) {
+            $this->actuals[] = $actual;
+            $actual->setPartida($this);
+        }
+
+        return $this;
+    }
+
+    public function removeActual(Actual $actual): self
+    {
+        if ($this->actuals->removeElement($actual)) {
+            // set the owning side to null (unless already changed)
+            if ($actual->getPartida() === $this) {
+                $actual->setPartida(null);
             }
         }
 
