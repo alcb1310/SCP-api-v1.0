@@ -2,14 +2,40 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ObraRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ObraRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [
+        'get',
+        'post'
+    ],
+    itemOperations: [
+        'get',
+        'put'
+    ],
+    normalizationContext: [
+        'groups' => ['obra:read']
+    ],
+    denormalizationContext:[
+        'groups' => ['obra:write']
+    ]
+)]
+#[UniqueEntity(
+    fields: ['nombre'],
+    errorPath: 'nombre',
+    message: 'El nombre de la obra ya existe'
+)]
+#[ApiFilter(SearchFilter::class, properties: ['nombre' => 'partial'])]
 class Obra
 {
     #[ORM\Id]
@@ -18,12 +44,34 @@ class Obra
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups([
+        'obra:read',
+        'obra:write'
+    ])]
+    #[Assert\NotBlank(message: 'Ingrese un nombre de obra')]
+    #[Assert\Length(
+        min: 5,
+        minMessage: 'El nombre de la obra debe tener al menos 5 caracteres'
+    )]
     private $nombre;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups([
+        'obra:read',
+        'obra:write'
+    ])]
+    #[Assert\NotBlank(message: 'Ingrese el numero de casas')]
+    #[Assert\GreaterThan(
+        value: 0,
+        message: 'El numero de casas debe ser un numero mayor a cero'
+    )]
     private $casas;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups([
+        'obra:read',
+        'obra:write'
+    ])]
     private $activo;
 
     #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Presupuesto::class)]
