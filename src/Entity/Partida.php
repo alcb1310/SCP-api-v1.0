@@ -47,6 +47,9 @@ class Partida
     #[ORM\OneToMany(mappedBy: 'partida', targetEntity: Control::class)]
     private $controls;
 
+    #[ORM\OneToMany(mappedBy: 'partida', targetEntity: Flujo::class)]
+    private $flujos;
+
     public function __construct()
     {
         $this->presupuestos = new ArrayCollection();
@@ -54,6 +57,7 @@ class Partida
         $this->actuals = new ArrayCollection();
         $this->actualHistoricos = new ArrayCollection();
         $this->controls = new ArrayCollection();
+        $this->flujos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -265,6 +269,36 @@ class Partida
             // set the owning side to null (unless already changed)
             if ($control->getPartida() === $this) {
                 $control->setPartida(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Flujo>
+     */
+    public function getFlujos(): Collection
+    {
+        return $this->flujos;
+    }
+
+    public function addFlujo(Flujo $flujo): self
+    {
+        if (!$this->flujos->contains($flujo)) {
+            $this->flujos[] = $flujo;
+            $flujo->setPartida($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFlujo(Flujo $flujo): self
+    {
+        if ($this->flujos->removeElement($flujo)) {
+            // set the owning side to null (unless already changed)
+            if ($flujo->getPartida() === $this) {
+                $flujo->setPartida(null);
             }
         }
 
