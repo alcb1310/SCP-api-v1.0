@@ -15,6 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ProveedorRepository::class)]
 #[ApiResource(
+    security: 'is_granted("ROLE_USER")',
     collectionOperations:[
         'get',
         'post'
@@ -65,7 +66,8 @@ class Proveedor
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
         'proveedor:read',
-        'proveedor:write'
+        'proveedor:write',
+        'factura:read'
     ])]
     #[Assert\NotBlank(
         message: 'Ingrese un nombre para el proveedor'

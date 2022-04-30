@@ -47,7 +47,8 @@ class Obra
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
         'obra:read',
-        'obra:write'
+        'obra:write',
+        'factura:read'
     ])]
     #[Assert\NotBlank(message: 'Ingrese un nombre de obra')]
     #[Assert\Length(

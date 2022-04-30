@@ -16,17 +16,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PartidaRepository::class)]
 #[ApiResource(
+    security: 'is_granted("ROLE_USER")',
     collectionOperations:[
         'get',
-        'post' => [
-            'security' => 'is_granted("ROLE_USER")'
-        ]
+        'post'
     ],
     itemOperations: [
         'get',
-        'put' => [
-            'security' => 'is_granted("ROLE_USER")'
-        ]
+        'put'
     ],
     normalizationContext:[
         'groups' => ['partida:read']

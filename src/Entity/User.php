@@ -19,12 +19,15 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
         'post' => [
             'validation_groups' => [
                 'Default', 'create'
-            ]
+            ],
+            'security' => 'is_granted("ROLE_USER")',
         ]
     ],
     itemOperations:[
         'get',
-        'put'
+        'put' => [
+            'security' => 'is_granted("ROLE_USER")',
+        ]
     ],
     normalizationContext:[
         'groups' => ['user:read']
