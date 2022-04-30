@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PresupuestoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
@@ -30,6 +31,11 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     normalizationContext:[
         'groups' => ['presupuesto:read']
     ],
+)]
+#[UniqueEntity(
+    fields:['obra', 'partida'],
+    message: "La partida seleccionada para esa obra ya existe",
+    errorPath:'partida'
 )]
 class Presupuesto
 {
