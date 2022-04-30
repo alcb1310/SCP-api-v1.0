@@ -5,9 +5,32 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PresupuestoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ORM\Entity(repositoryClass: PresupuestoRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    security:'is_granted("ROLE_USER")',
+    collectionOperations:[
+        'GET',
+        'POST' => [
+            'denormalization_context' => [
+                'groups' =>'presupuesto:write'
+            ]
+        ],
+    ],
+    itemOperations:[
+        'GET',
+        'PUT' => [
+            'denormalization_context' => [
+                'groups' => 'presupuesto:item:write'
+            ]
+        ]
+    ],
+    normalizationContext:[
+        'groups' => ['presupuesto:read']
+    ],
+)]
 class Presupuesto
 {
     #[ORM\Id]
@@ -16,38 +39,79 @@ class Presupuesto
     private $id;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $cantini;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $costoini;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $totalini;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $rendidocant;
+    #[Groups([
+        'presupuesto:read'
+    ])]
+    private $rendidocant = 0;
 
     #[ORM\Column(type: 'float')]
-    private $reniddotot;
+    #[Groups([
+        'presupuesto:read'
+    ])]
+    private $reniddotot = 0;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:item:write'
+    ])]
     private $porgascan;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:item:write'
+    ])]
     private $porgascost;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:item:write'
+    ])]
     private $porgastot;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'presupuesto:read'
+    ])]
     private $presactu;
 
     #[ORM\ManyToOne(targetEntity: Obra::class, inversedBy: 'presupuestos')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $obra;
 
     #[ORM\ManyToOne(targetEntity: Partida::class, inversedBy: 'presupuestos')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $partida;
 
     public function getId(): ?int
@@ -183,6 +247,18 @@ class Presupuesto
     public function setPartida(?Partida $partida): self
     {
         $this->partida = $partida;
+
+        return $this;
+    }
+
+    public function getIsEdit(): ?bool
+    {
+        return $this->isEdit;
+    }
+
+    public function setIsEdit(?bool $isEdit): self
+    {
+        $this->isEdit = $isEdit;
 
         return $this;
     }
