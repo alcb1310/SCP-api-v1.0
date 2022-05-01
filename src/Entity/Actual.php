@@ -7,7 +7,10 @@ use App\Repository\ActualRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ActualRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [],
+    itemOperations: []
+)]
 class Actual
 {
     #[ORM\Id]

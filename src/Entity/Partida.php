@@ -54,7 +54,8 @@ class Partida
     #[ORM\Column(type: 'string', length: 50)]
     #[Groups([
         'partida:read',
-        'partida:write'
+        'partida:write',
+        'control:read'
     ])]
     #[Assert\NotBlank(message:'Ingrese un codigo')]
     #[Assert\Length(
@@ -66,7 +67,8 @@ class Partida
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
         'partida:read',
-        'partida:write'
+        'partida:write',
+        'control:read'
     ])]
     #[Assert\NotBlank(message:'Ingrese un nombre para la partida')]
     #[Assert\Length(

@@ -48,7 +48,8 @@ class Obra
     #[Groups([
         'obra:read',
         'obra:write',
-        'factura:read'
+        'factura:read',
+        'control:read'
     ])]
     #[Assert\NotBlank(message: 'Ingrese un nombre de obra')]
     #[Assert\Length(
@@ -60,7 +61,8 @@ class Obra
     #[ORM\Column(type: 'integer')]
     #[Groups([
         'obra:read',
-        'obra:write'
+        'obra:write',
+        'control:read'
     ])]
     #[Assert\NotBlank(message: 'Ingrese el numero de casas')]
     #[Assert\GreaterThan(
