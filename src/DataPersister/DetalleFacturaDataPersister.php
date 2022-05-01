@@ -107,15 +107,59 @@ class DetalleFacturaDataPersister implements ContextAwareDataPersisterInterface
         }
     }
 
+    /**
+     * remove
+     *
+     * @param  DetalleFactura $data
+     */
     public function remove($data, array $context = [])
     {
         // TODO implement this method
         $this->em->beginTransaction();
         try{
             $this->logger->debug("Borrando detalle factura");
+            $this->logger->debug($data->getPartida()->getCodigo());
+            $factura = $data->getFactura();
+            $obra = $factura->getObra();
+            $this->logger->debug(sprintf("obra: %s", $obra->getNombre()));
+
+            $factura->setTotal($factura->getTotal() - $data->getTotal());
+            $this->em->persist($factura);
+            $this->em->flush();
+
+            $partida = $data->getPartida();
+            $presupuesto = $this->presupuestoRepository->findOneBy([
+                'partida' => $partida,
+                'obra' => $obra
+            ]);
+
+            $presupuesto->setRendidocant($presupuesto->getRendidocant() - $data->getCantidad());
+            $presupuesto->setReniddotot($presupuesto->getReniddotot() - $data->getTotal());
+            $presupuesto->setPorgascan($presupuesto->getPorgascan() + $data->getCantidad());
+            $presupuesto->setPorgastot($presupuesto->getPorgastot() + $data->getTotal());
+            $this->em->persist($presupuesto);
+            $this->em->flush();
+
+            $partida = $partida->getPadre();
+
+            while($partida){
+                $presupuesto = $this->presupuestoRepository->findOneBy([
+                    'partida' => $partida,
+                    'obra' => $obra
+                ]);
+
+                $presupuesto->setReniddotot($presupuesto->getReniddotot() - $data->getTotal());
+                $presupuesto->setPorgastot($presupuesto->getPorgastot() + $data->getTotal());
+                $this->persist($presupuesto);
+                $this->em->flush();
+
+                $partida = $partida->getPadre();
+            }
 
             $this->em->remove($data);
-            // $this->em->flush();
+            $this->em->flush();
+
+            $this->em->commit();
         } catch (\Exception $e){
             $this->em->rollback();
             return json_encode($e);
