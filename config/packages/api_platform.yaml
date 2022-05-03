@@ -11,3 +11,5 @@ api_platform:
   collection:
     pagination:
       enabled_parameter_name: pagination # URL query parameter to disable pagination
+  exception_to_status:
+    App\Exception\PresupuestoNotFoundException: 400

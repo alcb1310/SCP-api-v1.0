@@ -5,8 +5,6 @@ namespace App\DataPersister;
 use App\Entity\DetalleFactura;
 use Doctrine\ORM\EntityManagerInterface;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Repository\FacturaRepository;
-use App\Repository\ObraRepository;
 use App\Repository\PresupuestoRepository;
 use Psr\Log\LoggerInterface;
 
