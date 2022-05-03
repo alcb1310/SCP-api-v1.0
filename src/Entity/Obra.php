@@ -49,7 +49,9 @@ class Obra
         'obra:read',
         'obra:write',
         'factura:read',
-        'control:read'
+        'control:read',
+        'actual-historico:read',
+        'actual:read'
     ])]
     #[Assert\NotBlank(message: 'Ingrese un nombre de obra')]
     #[Assert\Length(

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\ActualHistorico;
 use App\Entity\Control;
+use App\Repository\ActualRepository;
 use App\Repository\ObraRepository;
 use App\Repository\PresupuestoRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +18,8 @@ class PresupuestoEndPointCustomMethods extends AbstractController
     #[Route('/presupuestos/cierre', name:'app-cierre', methods:'POST')]
     public function setCierreMes(
         Request $request, PresupuestoRepository $presupuestoRepository,
-        EntityManagerInterface $em, ObraRepository $obraRepository): Response
+        EntityManagerInterface $em, ObraRepository $obraRepository,
+        ActualRepository $actualRepository): Response
     {
 
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -47,6 +50,10 @@ class PresupuestoEndPointCustomMethods extends AbstractController
             'obra' => $obra,
         ]);
 
+        $actuals = $actualRepository->findBy([
+            'obra' => $obra
+        ]);
+
         $em->beginTransaction();
 
         try{
@@ -66,6 +73,18 @@ class PresupuestoEndPointCustomMethods extends AbstractController
                 $control->setPresactu($presupuesto->getPresactu());
 
                 $em->persist($control);
+                $em->flush();
+            }
+
+            foreach($actuals as $actual){
+                $actualHistorico = new ActualHistorico;
+                $actualHistorico->setFecha(new \DateTime($fecha));
+                $actualHistorico->setObra($obra);
+                $actualHistorico->setPartida($actual->getPartida());
+                $actualHistorico->setCasas($actual->getCasas());
+                $actualHistorico->setTotal($actual->getTotal());
+
+                $em->persist($actualHistorico);
                 $em->flush();
             }
 

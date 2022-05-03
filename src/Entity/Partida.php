@@ -55,7 +55,9 @@ class Partida
     #[Groups([
         'partida:read',
         'partida:write',
-        'control:read'
+        'control:read',
+        'actual-historico:read',
+        'actual:read'
     ])]
     #[Assert\NotBlank(message:'Ingrese un codigo')]
     #[Assert\Length(
@@ -68,7 +70,9 @@ class Partida
     #[Groups([
         'partida:read',
         'partida:write',
-        'control:read'
+        'control:read',
+        'actual-historico:read',
+        'actual:read'
     ])]
     #[Assert\NotBlank(message:'Ingrese un nombre para la partida')]
     #[Assert\Length(
