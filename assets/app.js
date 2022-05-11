@@ -11,10 +11,15 @@ import "./styles/app.css";
 // start the Stimulus application
 import "./bootstrap";
 
-import { createApp } from "vue";
-import App from "./pages/Main";
-
 import "bootstrap";
 
-const app = createApp(App);
-app.mount("#app");
+import React from "react";
+import ReactDOM from "react-dom/client";
+import Application from "./Application";
+
+const root = ReactDOM.createRoot(document.getElementById("app"));
+root.render(
+  <React.StrictMode>
+    <Application />
+  </React.StrictMode>
+);

@@ -5,6 +5,8 @@ use Symfony\Component\HttpFoundation\Response;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Security;
 
 class SecurityController extends AbstractController
 {
@@ -29,5 +31,17 @@ class SecurityController extends AbstractController
     public function logout()
     {
         throw new \Exception('should not be reached');
+    }
+
+    #[Route('/is-logged')]
+    public function isLoggedIn(Security $security): Response{
+        $user = $this->getUser();
+
+        if ($user === null){
+            return new JsonResponse('');
+        }
+
+        return new JsonResponse($user->getUsername());
+
     }
 }
