@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Col, Row, Table, Button, Form, Label, Input } from "reactstrap";
+import { Col, Row, Table, Button } from "reactstrap";
 import axios from "axios";
 import { faCheck, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

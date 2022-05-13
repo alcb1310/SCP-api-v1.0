@@ -5,6 +5,7 @@ import { Spinner, Container } from "reactstrap";
 import implantacion from "../images/implantacion.webp";
 import Footer from "../components/Footer";
 import Obra from "./Obra";
+import Partida from "./Partida";
 
 function HomePage({ username, logout }) {
   const [name, setName] = useState("");
@@ -42,6 +43,7 @@ function HomePage({ username, logout }) {
     </Container>
   );
   const obra = menuItem === "obra" && <Obra />;
+  const partida = menuItem === "partidas" && <Partida />;
 
   return (
     <div>
@@ -49,6 +51,7 @@ function HomePage({ username, logout }) {
       <main>
         {home}
         {obra}
+        {partida}
       </main>
       <Footer />
     </div>
