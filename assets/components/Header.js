@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Container,
   Nav,
@@ -104,5 +105,11 @@ function Header({ name, logout, changeMenu }) {
     </header>
   );
 }
+
+Header.propTypes = {
+  name: PropTypes.string.isRequired,
+  logout: PropTypes.func.isRequired,
+  changeMenu: PropTypes.func.isRequired,
+};
 
 export default Header;

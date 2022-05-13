@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Button, Col, Form, FormFeedback, Input, Label, Row } from "reactstrap";
 
 function PartidaForm(props) {
@@ -183,7 +184,12 @@ function PartidaForm(props) {
             <Button color="primary" outline>
               Grabar
             </Button>
-            <Button color="secondary" outline onClick={props.closeForm} className="ms-2">
+            <Button
+              color="secondary"
+              outline
+              onClick={props.closeForm}
+              className="ms-2"
+            >
               Salir
             </Button>
           </Col>
@@ -191,6 +197,20 @@ function PartidaForm(props) {
       </Form>
     </>
   );
+}
+
+PartidaForm.propTypes = {
+  isEdit: PropTypes.bool.isRequired,
+  toggleLoadPartida: PropTypes.func.isRequired,
+  closeForm: PropTypes.func.isRequired,
+  selectedPartida: PropTypes.shape({
+    '@id' : PropTypes.string,
+    codigo: PropTypes.string,
+    nombre: PropTypes.string,
+    acumula: PropTypes.bool,
+    nivel: PropTypes.number,
+    padre: PropTypes.string,
+  })
 }
 
 export default PartidaForm;

@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { Form, Row, Col, Label, Input, Button, FormFeedback } from "reactstrap";
 
 function ObraForm(props) {
@@ -144,5 +145,18 @@ function ObraForm(props) {
     </Form>
   );
 }
+
+ObraForm.propTyes = {
+  isEdit: PropTypes.bool.isRequired,
+  toggleLoadObras: PropTypes.func.isRequired,
+  closeForm: PropTypes.func.isRequired,
+  clearObra: PropTypes.func.isRequired,
+  obra: PropTypes.shape({
+    "@id": PropTypes.string,
+    nombre: PropTypes.string,
+    casas: PropTypes.number,
+    activo: PropTypes.bool,
+  }),
+};
 
 export default ObraForm;

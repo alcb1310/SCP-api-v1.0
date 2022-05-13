@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React, { useState } from "react";
 import {
   Button,
@@ -8,7 +9,6 @@ import {
   Label,
   Row,
   FormFeedback,
-  FormText,
 } from "reactstrap";
 
 function Login(props) {
@@ -74,6 +74,11 @@ function Login(props) {
       </Row>
     </Form>
   );
+}
+
+Login.propTypes = {
+  isInvalid: PropTypes.bool.isRequired,
+  login: PropTypes.func.isRequired
 }
 
 export default Login;

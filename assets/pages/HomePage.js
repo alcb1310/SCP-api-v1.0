@@ -1,7 +1,9 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import Header from "../components/Header";
+import PropTypes from 'prop-types'
 import { Spinner, Container } from "reactstrap";
+
+import Header from "../components/Header";
 import implantacion from "../images/implantacion.webp";
 import Footer from "../components/Footer";
 import Obra from "./Obra";
@@ -56,6 +58,11 @@ function HomePage({ username, logout }) {
       <Footer />
     </div>
   );
+}
+
+HomePage.propTypes = {
+  username: PropTypes.string.isRequired,
+  logout: PropTypes.func.isRequired
 }
 
 export default HomePage;
