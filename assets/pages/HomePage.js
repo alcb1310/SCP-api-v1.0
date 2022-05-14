@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types'
+import PropTypes from "prop-types";
 import { Spinner, Container } from "reactstrap";
 
 import Header from "../components/Header";
@@ -8,6 +8,7 @@ import implantacion from "../images/implantacion.webp";
 import Footer from "../components/Footer";
 import Obra from "./Obra";
 import Partida from "./Partida";
+import Proveedor from "./Proveedor";
 
 function HomePage({ username, logout }) {
   const [name, setName] = useState("");
@@ -46,6 +47,7 @@ function HomePage({ username, logout }) {
   );
   const obra = menuItem === "obra" && <Obra />;
   const partida = menuItem === "partidas" && <Partida />;
+  const proveedor = menuItem === "proveedor" && <Proveedor />;
 
   return (
     <div>
@@ -54,6 +56,7 @@ function HomePage({ username, logout }) {
         {home}
         {obra}
         {partida}
+        {proveedor}
       </main>
       <Footer />
     </div>
@@ -62,7 +65,7 @@ function HomePage({ username, logout }) {
 
 HomePage.propTypes = {
   username: PropTypes.string.isRequired,
-  logout: PropTypes.func.isRequired
-}
+  logout: PropTypes.func.isRequired,
+};
 
 export default HomePage;
