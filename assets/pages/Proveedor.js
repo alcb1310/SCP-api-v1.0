@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
-import { Col, Row } from "reactstrap";
+import { Col, Row, Table, Button } from "reactstrap";
 
 function Proveedor() {
   const [proveedores, setProveedores] = useState([]);
@@ -25,18 +25,41 @@ function Proveedor() {
         }
       }
     });
-  }, []);
+  }, [url]);
 
-  const handlePageClick = (event) => {
+  function handlePageClick(event) {
     const pageSelected = event.selected + 1;
-    setUrl(`/api/partidas?page=${pageSelected}`);
-  };
+    setUrl(`/api/proveedors?page=${pageSelected}`);
+  }
+
+  function addProveedor() {
+    console.log("clicked Add Proveedor");
+  }
+
+  const proveedoresEl = proveedores.map((proveedor) => {
+    return (
+      <tr key={proveedor["@id"]}>
+        <td>{proveedor.ruc}</td>
+        <td>{proveedor.nombre}</td>
+        <td>{proveedor.contacto}</td>
+        <td>{proveedor.telefono}</td>
+        <td>{proveedor.email}</td>
+      </tr>
+    );
+  });
+
+  console.log(proveedoresEl);
 
   return (
     <>
       <Row>
-        <Col md={{ offset: 2, size: 8 }}>
+        <Col md={{ offset: 2, size: 6 }}>
           <h3>Proveedor</h3>
+        </Col>
+        <Col md={2}>
+          <Button color="primary" outline onClick={addProveedor}>
+            Agregar
+          </Button>
         </Col>
       </Row>
       <Row>
@@ -46,7 +69,7 @@ function Proveedor() {
             breakLabel="..."
             nextLabel=">>"
             onPageChange={handlePageClick}
-            pageRangeDisplayed={5}
+            pageRangeDisplayed={3}
             previousLabel="<<"
             renderOnZeroPageCount={null}
             containerClassName="pagination pagination-sm"
@@ -59,6 +82,22 @@ function Proveedor() {
             activeLinkClassName="active"
             activeClassName="active"
           />
+        </Col>
+      </Row>
+      <Row>
+        <Col md={{ offset: 2, size: 8 }}>
+          <Table hover size="sm">
+            <thead>
+              <tr>
+                <td>RUC</td>
+                <td>Nombre</td>
+                <td>Contacto</td>
+                <td>Teléfono</td>
+                <td>E-mail</td>
+              </tr>
+            </thead>
+            <tbody>{proveedoresEl}</tbody>
+          </Table>
         </Col>
       </Row>
     </>
