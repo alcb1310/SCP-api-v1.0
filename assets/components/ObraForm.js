@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import PropTypes from "prop-types";
 import { Form, Row, Col, Label, Input, Button, FormFeedback } from "reactstrap";
 
@@ -61,6 +62,7 @@ function ObraForm(props) {
     } else {
       axios
         .post("/api/obras", {
+          uuid: uuidv4(),
           nombre: obraValue.nombre,
           casas: obraValue.casas,
           activo: obraValue.activo,
