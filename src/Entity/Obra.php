@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\ObraRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -42,7 +45,13 @@ class Obra
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[ApiProperty(identifier:false)]
     private $id;
+
+    #[Orm\Column(type: 'uuid', unique:true)]
+    #[ApiProperty(identifier:true)]
+    #[Groups('obra:write')]
+    private $uuid;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
@@ -98,7 +107,7 @@ class Obra
     #[ORM\OneToMany(mappedBy: 'obra', targetEntity: Flujo::class)]
     private $flujos;
 
-    public function __construct()
+    public function __construct(UuidInterface $uuid = null)
     {
         $this->presupuestos = new ArrayCollection();
         $this->facturas = new ArrayCollection();
@@ -106,6 +115,7 @@ class Obra
         $this->actualHistoricos = new ArrayCollection();
         $this->controls = new ArrayCollection();
         $this->flujos = new ArrayCollection();
+        $this->uuid = $uuid ?: Uuid::uuid4();
     }
 
     public function getId(): ?int
@@ -327,5 +337,10 @@ class Obra
         }
 
         return $this;
+    }
+
+    public function getUuid(): UuidInterface
+    {
+        return $this->uuid;
     }
 }
