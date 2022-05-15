@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import PropTypes from "prop-types";
 import { Button, Col, Form, FormFeedback, Input, Label, Row } from "reactstrap";
 
@@ -24,7 +25,9 @@ function PartidaForm(props) {
         nombre: props.selectedPartida.nombre,
         acumula: props.selectedPartida.acumula,
         nivel: props.selectedPartida.nivel,
-        padre: props.selectedPartida.padre["@id"],
+        padre: props.selectedPartida.padre
+          ? props.selectedPartida.padre["@id"]
+          : "",
       });
     }
 
@@ -67,7 +70,6 @@ function PartidaForm(props) {
       ...partidaValue,
       padre: partidaValue.padre === "" ? null : partidaValue.padre,
     };
-    console.log(data);
     if (props.isEdit) {
       axios
         .put(props.selectedPartida["@id"], data)
@@ -87,8 +89,10 @@ function PartidaForm(props) {
           }
         });
     } else {
+      const uuid = uuidv4();
+      const postData = { ...data, uuid };
       axios
-        .post("/api/partidas", data)
+        .post("/api/partidas", postData)
         .then((d) => {
           props.toggleLoadPartida();
           props.closeForm();
@@ -204,13 +208,15 @@ PartidaForm.propTypes = {
   toggleLoadPartida: PropTypes.func.isRequired,
   closeForm: PropTypes.func.isRequired,
   selectedPartida: PropTypes.shape({
-    '@id' : PropTypes.string,
+    "@id": PropTypes.string,
     codigo: PropTypes.string,
     nombre: PropTypes.string,
     acumula: PropTypes.bool,
     nivel: PropTypes.number,
-    padre: PropTypes.string,
-  })
-}
+    padre: PropTypes.shape({
+      "@id": PropTypes.string,
+    }),
+  }),
+};
 
 export default PartidaForm;

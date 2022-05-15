@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PartidaRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -50,7 +53,13 @@ class Partida
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[ApiProperty(identifier: false)]
     private $id;
+
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ApiProperty(identifier: true)]
+    #[Groups(['partida:write'])]
+    private $uuid;
 
     #[ORM\Column(type: 'string', length: 50)]
     #[Groups([
@@ -126,7 +135,7 @@ class Partida
     #[ORM\OneToMany(mappedBy: 'partida', targetEntity: Flujo::class)]
     private $flujos;
 
-    public function __construct()
+    public function __construct(UuidInterface $uuid = null)
     {
         $this->presupuestos = new ArrayCollection();
         $this->detalleFacturas = new ArrayCollection();
@@ -134,6 +143,7 @@ class Partida
         $this->actualHistoricos = new ArrayCollection();
         $this->controls = new ArrayCollection();
         $this->flujos = new ArrayCollection();
+        $this->uuid = $uuid ?: Uuid::uuid4();
     }
 
     public function getId(): ?int
@@ -379,5 +389,10 @@ class Partida
         }
 
         return $this;
+    }
+
+    public function getUuid(): UuidInterface
+    {
+        return $this->uuid;
     }
 }

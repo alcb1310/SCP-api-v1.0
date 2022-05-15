@@ -43,8 +43,11 @@ function Partida() {
   };
 
   function editPartida(id) {
-    setSelectedPartida(partidas.find((part) => part["@id"] === id));
-    setIsEdit(true);
+    const data = partidas.find((part) => {
+      return part["@id"] === id;
+    });
+    setSelectedPartida(data);
+    // setIsEdit(true);
     setShowForm(true);
   }
 
