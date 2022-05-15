@@ -27,4 +27,3 @@ yarn-error.log
 ###< phpunit/phpunit ###
 
 /.yarn/
-/.yarn/cache/

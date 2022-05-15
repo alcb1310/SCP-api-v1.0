@@ -2,12 +2,9 @@
 
 namespace App\Entity;
 
-use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProveedorRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,7 +16,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: ProveedorRepository::class)]
 #[ApiResource(
     security: 'is_granted("ROLE_USER")',
-    order: ['nombre' => 'ASC'],
     collectionOperations:[
         'get',
         'post'
@@ -51,13 +47,7 @@ class Proveedor
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[ApiProperty(identifier: false)]
     private $id;
-
-    #[Orm\Column(type: 'uuid', unique: true)]
-    #[ApiProperty(identifier: true)]
-    #[Groups('proveedor:write')]
-    private $uuid;
 
     #[ORM\Column(type: 'string', length: 20)]
     #[Groups([
@@ -118,10 +108,9 @@ class Proveedor
     ])]
     private $facturas;
 
-    public function __construct(UuidInterface $uuid = null)
+    public function __construct()
     {
         $this->facturas = new ArrayCollection();
-        $this->uuid = $uuid ?: Uuid::uuid4();
     }
 
     public function getId(): ?int
@@ -217,10 +206,5 @@ class Proveedor
         }
 
         return $this;
-    }
-
-    public function getUuid(): UuidInterface
-    {
-        return $this->uuid;
     }
 }
