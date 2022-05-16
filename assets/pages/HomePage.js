@@ -9,6 +9,7 @@ import Footer from "../components/Footer";
 import Obra from "./Obra";
 import Partida from "./Partida";
 import Proveedor from "./Proveedor";
+import Presupuesto from "./Presupuesto";
 
 function HomePage({ username, logout }) {
   const [name, setName] = useState("");
@@ -45,9 +46,11 @@ function HomePage({ username, logout }) {
       <img src={implantacion} alt="Implantacion de cantagua II" />
     </Container>
   );
+
   const obra = menuItem === "obra" && <Obra />;
   const partida = menuItem === "partidas" && <Partida />;
   const proveedor = menuItem === "proveedor" && <Proveedor />;
+  const presupuesto = menuItem === "presupuesto" && <Presupuesto />;
 
   return (
     <div>
@@ -57,6 +60,7 @@ function HomePage({ username, logout }) {
         {obra}
         {partida}
         {proveedor}
+        {presupuesto}
       </main>
       <Footer />
     </div>

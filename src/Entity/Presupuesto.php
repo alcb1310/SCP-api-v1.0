@@ -2,15 +2,24 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use App\Repository\PresupuestoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PresupuestoRepository::class)]
 #[ApiResource(
     security:'is_granted("ROLE_USER")',
+    order: [
+        'obra.nombre' => 'ASC',
+        'partida.codigo' => 'ASC',
+    ],
     collectionOperations:[
         'GET',
         'POST' => [
@@ -31,6 +40,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'groups' => ['presupuesto:read']
     ],
 )]
+#[ApiFilter(BooleanFilter::class, properties: [
+    'obra.activo',
+    'partida.acumula'
+])]
 #[UniqueEntity(
     fields:['obra', 'partida'],
     message: "La partida seleccionada para esa obra ya existe",
@@ -41,7 +54,13 @@ class Presupuesto
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[ApiProperty(identifier: false)]
     private $id;
+
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ApiProperty(identifier:true)]
+    #[Groups(['presupuesto:write'])]
+    private $uuid;
 
     #[ORM\Column(type: 'float', nullable: true)]
     #[Groups([
@@ -118,6 +137,11 @@ class Presupuesto
         'presupuesto:write'
     ])]
     private $partida;
+
+    public function __construct(UuidInterface $uuid)
+    {
+        $this->uuid = $uuid ?: Uuid::uuid4();
+    }
 
     public function getId(): ?int
     {
@@ -266,5 +290,10 @@ class Presupuesto
         $this->isEdit = $isEdit;
 
         return $this;
+    }
+
+    public function getUuid(): UuidInterface
+    {
+        return $this->uuid;
     }
 }

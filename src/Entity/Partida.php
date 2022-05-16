@@ -67,7 +67,8 @@ class Partida
         'partida:write',
         'control:read',
         'actual-historico:read',
-        'actual:read'
+        'actual:read',
+        'presupuesto:read'
     ])]
     #[Assert\NotBlank(message:'Ingrese un codigo')]
     #[Assert\Length(
@@ -82,7 +83,8 @@ class Partida
         'partida:write',
         'control:read',
         'actual-historico:read',
-        'actual:read'
+        'actual:read',
+        'presupuesto:read'
     ])]
     #[Assert\NotBlank(message:'Ingrese un nombre para la partida')]
     #[Assert\Length(
@@ -94,7 +96,8 @@ class Partida
     #[ORM\Column(type: 'boolean')]
     #[Groups([
         'partida:read',
-        'partida:write'
+        'partida:write',
+        'presupuesto:read'
     ])]
     private $acumula;
 

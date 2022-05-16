@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\PresupuestoRepository;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 
 class PresupuestoDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -92,7 +93,7 @@ class PresupuestoDataPersister implements ContextAwareDataPersisterInterface
                     ]);
 
                     if (!$newPresupuesto){
-                        $newPresupuesto = new Presupuesto;
+                        $newPresupuesto = new Presupuesto(Uuid::uuid4());
                         $newPresupuesto->setObra($data->getObra());
                         $newPresupuesto->setPartida($partida);
                         $newPresupuesto->setTotalini(0);

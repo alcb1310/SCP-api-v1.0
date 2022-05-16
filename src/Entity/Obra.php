@@ -60,7 +60,8 @@ class Obra
         'factura:read',
         'control:read',
         'actual-historico:read',
-        'actual:read'
+        'actual:read',
+        'presupuesto:read'
     ])]
     #[Assert\NotBlank(message: 'Ingrese un nombre de obra')]
     #[Assert\Length(
@@ -73,7 +74,8 @@ class Obra
     #[Groups([
         'obra:read',
         'obra:write',
-        'control:read'
+        'control:read',
+        'presupuesto:read'
     ])]
     #[Assert\NotBlank(message: 'Ingrese el numero de casas')]
     #[Assert\GreaterThan(
@@ -85,7 +87,8 @@ class Obra
     #[ORM\Column(type: 'boolean')]
     #[Groups([
         'obra:read',
-        'obra:write'
+        'obra:write',
+        'presupuesto:read'
     ])]
     private $activo;
 
