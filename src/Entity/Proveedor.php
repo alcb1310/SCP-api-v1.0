@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Filters\ProveedorSearchFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ProveedorRepository::class)]
@@ -46,6 +47,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     message: 'Ya existe un proveedor con ese nombre'
 )]
 #[ApiFilter(SearchFilter::class, properties:['nombre' => 'partial', 'ruc' => 'exact'])]
+#[ApiFilter(ProveedorSearchFilter::class)]
 class Proveedor
 {
     #[ORM\Id]

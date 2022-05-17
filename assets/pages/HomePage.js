@@ -10,6 +10,7 @@ import Obra from "./Obra";
 import Partida from "./Partida";
 import Proveedor from "./Proveedor";
 import Presupuesto from "./Presupuesto";
+import Facturas from "./Facturas";
 
 function HomePage({ username, logout }) {
   const [name, setName] = useState("");
@@ -51,6 +52,7 @@ function HomePage({ username, logout }) {
   const partida = menuItem === "partidas" && <Partida />;
   const proveedor = menuItem === "proveedor" && <Proveedor />;
   const presupuesto = menuItem === "presupuesto" && <Presupuesto />;
+  const facturas = menuItem === "factura" && <Facturas />;
 
   return (
     <div>
@@ -61,6 +63,7 @@ function HomePage({ username, logout }) {
         {partida}
         {proveedor}
         {presupuesto}
+        {facturas}
       </main>
       <Footer />
     </div>

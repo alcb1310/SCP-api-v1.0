@@ -2,17 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\FacturaRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: FacturaRepository::class)]
 #[ApiResource(
     security: 'is_granted("ROLE_USER")',
+    order: ['fecha' => 'DESC', 'proveedor.nombre' => 'ASC'],
     collectionOperations:[
         'GET',
         'POST' => [
@@ -39,7 +43,13 @@ class Factura
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[ApiProperty(identifier: false)]
     private $id;
+
+    #[ORM\Column(type: 'uuid', unique:true)]
+    #[ApiProperty(identifier: true)]
+    #[Groups('factura:write')]
+    private $uuid;
 
     #[ORM\Column(type: 'string', length: 100)]
     #[Groups([
@@ -85,9 +95,10 @@ class Factura
     ])]
     private $detalleFacturas;
 
-    public function __construct()
+    public function __construct(UuidInterface $uuid)
     {
         $this->detalleFacturas = new ArrayCollection();
+        $this->uuid = $uuid ?: Uuid::uuid4();
     }
 
     public function getId(): ?int
@@ -183,5 +194,10 @@ class Factura
         }
 
         return $this;
+    }
+
+    public function getUuid(): UuidInterface
+    {
+        return $this->uuid;
     }
 }

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
-import { Button, Col, Row, Table } from "reactstrap";
+import { Button, Col, Row, Table, Input } from "reactstrap";
 import ProveedorForm from "../components/ProveedorForm";
 
 function Proveedor() {
@@ -10,11 +10,13 @@ function Proveedor() {
   const [showForm, setShowForm] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [loadProveedor, setLoadProveedor] = useState(false);
-  const [url, setUrl] = useState("/api/proveedors");
+  const [params, setParams] = useState({});
   const [selectedProveedor, setSelectedProveedor] = useState({});
+  const [searchTerms, setSearchTerms] = useState("");
+  const url = "/api/proveedors";
 
   useEffect(() => {
-    axios.get(url).then((d) => {
+    axios.get(url, { params }).then((d) => {
       setProveedores(d.data["hydra:member"]);
       if (d.data["hydra:view"] && d.data["hydra:view"]["hydra:last"]) {
         let p = d.data["hydra:view"]["hydra:last"].search("page=");
@@ -28,15 +30,20 @@ function Proveedor() {
         }
       }
     });
-  }, [url, loadProveedor]);
+  }, [params, loadProveedor]);
 
   function toggleLoadProveedor() {
     setLoadProveedor((prevLoad) => !prevLoad);
   }
 
   function handlePageClick(event) {
-    const pageSelected = event.selected + 1;
-    setUrl(`/api/proveedors?page=${pageSelected}`);
+    const page = event.selected + 1;
+    setParams((prevParams) => ({ ...prevParams, page }));
+  }
+
+  function handleChange(event) {
+    setSearchTerms(event.target.value);
+    setParams({ search: event.target.value });
   }
 
   function addProveedor() {
@@ -116,6 +123,16 @@ function Proveedor() {
             nextLinkClassName="page-link"
             activeLinkClassName="active"
             activeClassName="active"
+          />
+        </Col>
+        <Col md={2}>
+          <Input
+            type="text"
+            placeholder="Busqueda"
+            name="search"
+            id="search"
+            onChange={handleChange}
+            value={searchTerms}
           />
         </Col>
       </Row>
