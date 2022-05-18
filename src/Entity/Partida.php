@@ -15,6 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use App\Filters\PartidaSearchFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PartidaRepository::class)]
@@ -48,6 +49,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 )]
 #[ApiFilter(SearchFilter::class, properties: ['nombre' => 'partial', 'codigo' => 'partial'])]
 #[ApiFilter(BooleanFilter::class, properties: ['acumula'])]
+#[ApiFilter(PartidaSearchFilter::class)]
 class Partida
 {
     #[ORM\Id]

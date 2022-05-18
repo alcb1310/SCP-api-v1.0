@@ -8,16 +8,17 @@ import PartidaForm from "../components/PartidaForm";
 
 function Partida() {
   const [partidas, setPartidas] = useState([]);
-  const [url, setUrl] = useState("/api/partidas");
   const [maxPages, setMaxPages] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [loadPartidas, setLoadPartidas] = useState(false);
   const [selectedPartida, setSelectedPartida] = useState({});
   const [search, setSearch] = useState("");
+  const [params, setParams] = useState({});
+  const url = "/api/partidas";
 
   useEffect(() => {
-    axios.get(url).then((d) => {
+    axios.get(url, { params }).then((d) => {
       setPartidas(d.data["hydra:member"]);
       if (d.data["hydra:view"]["hydra:last"]) {
         let p = d.data["hydra:view"]["hydra:last"].search("page=");
@@ -31,15 +32,15 @@ function Partida() {
         }
       }
     });
-  }, [url, loadPartidas]);
+  }, [params, loadPartidas]);
 
   function toggleLoadPartida() {
     setLoadPartidas((prevLoad) => !prevLoad);
   }
 
   const handlePageClick = (event) => {
-    const pageSelected = event.selected + 1;
-    setUrl(`/api/partidas?page=${pageSelected}&nombre=${search}`);
+    const page = event.selected + 1;
+    setParams((prevParams) => ({ ...prevParams, page }));
   };
 
   function editPartida(id) {
@@ -63,9 +64,7 @@ function Partida() {
 
   function partidaSearch(event) {
     setSearch(event.target.value);
-    axios
-      .get("/api/partidas", { params: { nombre: event.target.value } })
-      .then((d) => setUrl(d.data["hydra:view"]["@id"]));
+    setParams((prevParams) => ({ ...prevParams, search: event.target.value }));
   }
 
   const tableData = partidas.map((partida) => (
