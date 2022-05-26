@@ -5,9 +5,14 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ActualHistoricoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ActualHistoricoRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: ['GET'],
+    itemOperations: ['GET'],
+    normalizationContext:['groups' => 'actual-historico:read']
+)]
 class ActualHistorico
 {
     #[ORM\Id]
@@ -16,20 +21,25 @@ class ActualHistorico
     private $id;
 
     #[ORM\Column(type: 'date')]
+    #[Groups(['actual-historico:read'])]
     private $fecha;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['actual-historico:read'])]
     private $casas;
 
     #[ORM\Column(type: 'float')]
+    #[Groups(['actual-historico:read'])]
     private $total;
 
     #[ORM\ManyToOne(targetEntity: Obra::class, inversedBy: 'actualHistoricos')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['actual-historico:read'])]
     private $obra;
 
     #[ORM\ManyToOne(targetEntity: Partida::class, inversedBy: 'actualHistoricos')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['actual-historico:read'])]
     private $partida;
 
     public function getId(): ?int

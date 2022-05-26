@@ -2,19 +2,25 @@
 
 namespace App\Entity;
 
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProveedorRepository;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Filters\ProveedorSearchFilter;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ProveedorRepository::class)]
 #[ApiResource(
+    security: 'is_granted("ROLE_USER")',
+    order: ['nombre' => 'ASC'],
     collectionOperations:[
         'get',
         'post'
@@ -41,12 +47,19 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     message: 'Ya existe un proveedor con ese nombre'
 )]
 #[ApiFilter(SearchFilter::class, properties:['nombre' => 'partial', 'ruc' => 'exact'])]
+#[ApiFilter(ProveedorSearchFilter::class)]
 class Proveedor
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[ApiProperty(identifier: false)]
     private $id;
+
+    #[Orm\Column(type: 'uuid', unique: true)]
+    #[ApiProperty(identifier: true)]
+    #[Groups(['proveedor:write'])]
+    private $uuid;
 
     #[ORM\Column(type: 'string', length: 20)]
     #[Groups([
@@ -65,7 +78,8 @@ class Proveedor
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups([
         'proveedor:read',
-        'proveedor:write'
+        'proveedor:write',
+        'factura:read'
     ])]
     #[Assert\NotBlank(
         message: 'Ingrese un nombre para el proveedor'
@@ -106,9 +120,10 @@ class Proveedor
     ])]
     private $facturas;
 
-    public function __construct()
+    public function __construct(UuidInterface $uuid = null)
     {
         $this->facturas = new ArrayCollection();
+        $this->uuid = $uuid ?: Uuid::uuid4();
     }
 
     public function getId(): ?int
@@ -204,5 +219,10 @@ class Proveedor
         }
 
         return $this;
+    }
+
+    public function getUuid(): UuidInterface
+    {
+        return $this->uuid;
     }
 }

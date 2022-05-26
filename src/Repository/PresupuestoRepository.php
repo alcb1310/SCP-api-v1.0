@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use App\Entity\Obra;
+use App\Entity\Partida;
 use App\Entity\Presupuesto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -45,6 +47,26 @@ class PresupuestoRepository extends ServiceEntityRepository
         if ($flush) {
             $this->_em->flush();
         }
+    }
+
+    /**
+     * getSumPorGasTot
+     *
+     * @param  Obra $obra
+     * @param  Partida $partida
+     * @return float
+     */
+    public function getSumPorGasTot(Obra $obra, Partida $partida)
+    {
+        return $this->createQueryBuilder('p')
+            ->select('sum(p.porgastot)')
+            ->andWhere('p.obra = :obra')
+            ->andWhere('part.padre = :partida')
+            ->setParameter('partida', $partida)
+            ->setParameter('obra', $obra)
+            ->join('p.partida', 'part')
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     // /**

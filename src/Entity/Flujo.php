@@ -7,7 +7,10 @@ use App\Repository\FlujoRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FlujoRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    collectionOperations: [],
+    itemOperations: []
+)]
 class Flujo
 {
     #[ORM\Id]

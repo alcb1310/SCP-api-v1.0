@@ -2,53 +2,146 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use App\Repository\PresupuestoRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PresupuestoRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    security:'is_granted("ROLE_USER")',
+    order: [
+        'obra.nombre' => 'ASC',
+        'partida.codigo' => 'ASC',
+    ],
+    collectionOperations:[
+        'GET',
+        'POST' => [
+            'denormalization_context' => [
+                'groups' =>'presupuesto:write'
+            ]
+        ],
+    ],
+    itemOperations:[
+        'GET',
+        'PUT' => [
+            'denormalization_context' => [
+                'groups' => 'presupuesto:item:write'
+            ]
+        ]
+    ],
+    normalizationContext:[
+        'groups' => ['presupuesto:read']
+    ],
+)]
+#[ApiFilter(BooleanFilter::class, properties: [
+    'obra.activo',
+    'partida.acumula'
+])]
+#[UniqueEntity(
+    fields:['obra', 'partida'],
+    message: "La partida seleccionada para esa obra ya existe",
+    errorPath:'partida'
+)]
 class Presupuesto
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[ApiProperty(identifier: false)]
     private $id;
 
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ApiProperty(identifier:true)]
+    #[Groups(['presupuesto:write'])]
+    private $uuid;
+
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $cantini;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $costoini;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $totalini;
 
     #[ORM\Column(type: 'float', nullable: true)]
-    private $rendidocant;
+    #[Groups([
+        'presupuesto:read'
+    ])]
+    private $rendidocant = 0;
 
     #[ORM\Column(type: 'float')]
-    private $reniddotot;
+    #[Groups([
+        'presupuesto:read'
+    ])]
+    private $reniddotot = 0;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:item:write'
+    ])]
     private $porgascan;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:item:write'
+    ])]
     private $porgascost;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:item:write'
+    ])]
     private $porgastot;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'presupuesto:read'
+    ])]
     private $presactu;
 
     #[ORM\ManyToOne(targetEntity: Obra::class, inversedBy: 'presupuestos')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $obra;
 
     #[ORM\ManyToOne(targetEntity: Partida::class, inversedBy: 'presupuestos')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'presupuesto:read',
+        'presupuesto:write'
+    ])]
     private $partida;
+
+    public function __construct(UuidInterface $uuid)
+    {
+        $this->uuid = $uuid ?: Uuid::uuid4();
+    }
 
     public function getId(): ?int
     {
@@ -185,5 +278,22 @@ class Presupuesto
         $this->partida = $partida;
 
         return $this;
+    }
+
+    public function getIsEdit(): ?bool
+    {
+        return $this->isEdit;
+    }
+
+    public function setIsEdit(?bool $isEdit): self
+    {
+        $this->isEdit = $isEdit;
+
+        return $this;
+    }
+
+    public function getUuid(): UuidInterface
+    {
+        return $this->uuid;
     }
 }

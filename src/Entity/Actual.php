@@ -5,9 +5,25 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ActualRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ActualRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    security: 'is_granted("ROLE_USER")',
+    collectionOperations: [
+        'GET',
+        'POST' => [
+            'denormalization_context' => ['groups' => 'actual:write']
+        ]
+    ],
+    itemOperations: [
+        'GET',
+        'PUT' => [
+            'denormalization_context' => ['groups' => 'actual:item:write']
+        ]
+    ],
+    normalizationContext:['groups' => 'actual:read'],
+)]
 class Actual
 {
     #[ORM\Id]
@@ -16,17 +32,33 @@ class Actual
     private $id;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups([
+        'actual:read',
+        'actual:write',
+        'actual:item:write'
+    ])]
     private $casas;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'actual:read',
+    ])]
     private $total;
 
     #[ORM\ManyToOne(targetEntity: Obra::class, inversedBy: 'actuals')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'actual:read',
+        'actual:write'
+    ])]
     private $obra;
 
     #[ORM\ManyToOne(targetEntity: Partida::class, inversedBy: 'actuals')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'actual:read',
+        'actual:write'
+    ])]
     private $partida;
 
     public function getId(): ?int

@@ -5,9 +5,19 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ControlRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ControlRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    security: 'is_granted("ROLE_USER")',
+    collectionOperations:[
+        'get'
+    ],
+    itemOperations: [
+        'get'
+    ],
+    normalizationContext:['groups'=>'control:read']
+)]
 class Control
 {
     #[ORM\Id]
@@ -16,41 +26,53 @@ class Control
     private $id;
 
     #[ORM\Column(type: 'date')]
+    #[Groups('control:read')]
     private $fecha;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups('control:read')]
     private $cantini;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups('control:read')]
     private $costoini;
 
     #[ORM\Column(type: 'float')]
+    #[Groups('control:read')]
     private $totalini;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups('control:read')]
     private $rendidocant;
 
     #[ORM\Column(type: 'float')]
+    #[Groups('control:read')]
     private $rendidotot;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups('control:read')]
     private $porgascan;
 
     #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups('control:read')]
     private $porgascost;
 
     #[ORM\Column(type: 'float')]
+    #[Groups('control:read')]
     private $porgastot;
 
     #[ORM\Column(type: 'float')]
+    #[Groups('control:read')]
     private $presactu;
 
     #[ORM\ManyToOne(targetEntity: Obra::class, inversedBy: 'controls')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('control:read')]
     private $obra;
 
     #[ORM\ManyToOne(targetEntity: Partida::class, inversedBy: 'controls')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('control:read')]
     private $partida;
 
     public function getId(): ?int

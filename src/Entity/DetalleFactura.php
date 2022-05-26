@@ -5,9 +5,26 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\DetalleFacturaRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DetalleFacturaRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    // security:'is_granted("ROLE_USER")',
+    collectionOperations: [
+        'get',
+        'post'
+    ],
+    itemOperations: [
+        'get',
+        'delete'
+    ],
+    normalizationContext:[
+        'groups' => ['detalle-factura:read']
+    ],
+    denormalizationContext:[
+        'groups' => ['detalle-factura:write']
+    ]
+)]
 class DetalleFactura
 {
     #[ORM\Id]
@@ -16,20 +33,39 @@ class DetalleFactura
     private $id;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'detalle-factura:read',
+        'detalle-factura:write'
+    ])]
     private $cantidad;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'detalle-factura:read',
+        'detalle-factura:write'
+    ])]
     private $unitario;
 
     #[ORM\Column(type: 'float')]
+    #[Groups([
+        'detalle-factura:read'
+    ])]
     private $total;
 
     #[ORM\ManyToOne(targetEntity: Factura::class, inversedBy: 'detalleFacturas')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'detalle-factura:read',
+        'detalle-factura:write'
+    ])]
     private $factura;
 
     #[ORM\ManyToOne(targetEntity: Partida::class, inversedBy: 'detalleFacturas')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'detalle-factura:read',
+        'detalle-factura:write'
+    ])]
     private $partida;
 
     public function getId(): ?int

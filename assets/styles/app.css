@@ -1,0 +1,38 @@
+@import "~bootstrap";
+
+:root {
+  --dark: hsl(0, 0%, 20%);
+  --light: rgb(255, 255, 255);
+  --azul: rgb(0, 102, 153);
+  --azulsuave: rgba(0, 102, 153, 0.2);
+  --shadow: 0 1px 5px rgba(104, 104, 104, 0.8);
+  --white: rgb(255, 255, 255);
+  --almost-white: rgba(255, 255, 255, 0.8);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  color: var(--azul);
+}
+img {
+  width: 80%;
+}
+
+.app-welcome {
+  color: darkgreen;
+}
+
+.app-centered {
+  text-align: center;
+}
+
+footer {
+  display: block;
+  background-color: var(--azul);
+  color: var(--almost-white);
+  padding: 1em;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  text-align: center;
+}

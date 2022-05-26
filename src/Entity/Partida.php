@@ -2,34 +2,124 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\PartidaRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PartidaRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use App\Filters\PartidaSearchFilter;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PartidaRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    security: 'is_granted("ROLE_USER")',
+    order:['codigo' => 'ASC'],
+    collectionOperations:[
+        'get',
+        'post'
+    ],
+    itemOperations: [
+        'get',
+        'put'
+    ],
+    normalizationContext:[
+        'groups' => ['partida:read']
+    ],
+    denormalizationContext: [
+        'groups' => ['partida:write']
+    ]
+)]
+#[UniqueEntity(
+    fields: ['codigo'],
+    errorPath: 'codigo',
+    message: 'El codigo ingresado ya existe'
+)]
+#[UniqueEntity(
+    fields: ['nombre'],
+    errorPath: 'nombre',
+    message: "Ese nombre de partida ya existe"
+)]
+#[ApiFilter(SearchFilter::class, properties: ['nombre' => 'partial', 'codigo' => 'partial'])]
+#[ApiFilter(BooleanFilter::class, properties: ['acumula'])]
+#[ApiFilter(PartidaSearchFilter::class)]
 class Partida
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[ApiProperty(identifier: false)]
     private $id;
 
+    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ApiProperty(identifier: true)]
+    #[Groups(['partida:write'])]
+    private $uuid;
+
     #[ORM\Column(type: 'string', length: 50)]
+    #[Groups([
+        'partida:read',
+        'partida:write',
+        'control:read',
+        'actual-historico:read',
+        'actual:read',
+        'presupuesto:read'
+    ])]
+    #[Assert\NotBlank(message:'Ingrese un codigo')]
+    #[Assert\Length(
+        min: 2,
+        minMessage: 'El codigo debe tener al menos dos caracteres'
+    )]
     private $codigo;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups([
+        'partida:read',
+        'partida:write',
+        'control:read',
+        'actual-historico:read',
+        'actual:read',
+        'presupuesto:read'
+    ])]
+    #[Assert\NotBlank(message:'Ingrese un nombre para la partida')]
+    #[Assert\Length(
+        min: 5,
+        minMessage: 'El nombre de la partida debe tener al menos 5 caracteres'
+    )]
     private $nombre;
 
     #[ORM\Column(type: 'boolean')]
+    #[Groups([
+        'partida:read',
+        'partida:write',
+        'presupuesto:read'
+    ])]
     private $acumula;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups([
+        'partida:read',
+        'partida:write'
+    ])]
+    #[Assert\NotBlank(message:'Se debe especificar el nivel de la partida')]
+    #[Assert\GreaterThan(
+        value: 0,
+        message: 'El nivel debe ser mayor a 0'
+    )]
     private $nivel;
 
     #[ORM\ManyToOne(targetEntity: self::class)]
+    #[Groups([
+        'partida:read',
+        'partida:write'
+    ])]
     private $padre;
 
     #[ORM\OneToMany(mappedBy: 'partida', targetEntity: Presupuesto::class)]
@@ -50,7 +140,7 @@ class Partida
     #[ORM\OneToMany(mappedBy: 'partida', targetEntity: Flujo::class)]
     private $flujos;
 
-    public function __construct()
+    public function __construct(UuidInterface $uuid = null)
     {
         $this->presupuestos = new ArrayCollection();
         $this->detalleFacturas = new ArrayCollection();
@@ -58,6 +148,7 @@ class Partida
         $this->actualHistoricos = new ArrayCollection();
         $this->controls = new ArrayCollection();
         $this->flujos = new ArrayCollection();
+        $this->uuid = $uuid ?: Uuid::uuid4();
     }
 
     public function getId(): ?int
@@ -303,5 +394,10 @@ class Partida
         }
 
         return $this;
+    }
+
+    public function getUuid(): UuidInterface
+    {
+        return $this->uuid;
     }
 }
