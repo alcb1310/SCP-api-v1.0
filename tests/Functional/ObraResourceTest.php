@@ -30,7 +30,7 @@ class ObraResourceTest extends CustomApiTestCase
         ]);
 
 
-        $this->assertResponseStatusCodeSame(401, 'No se puede consultar las obras si no se esta autorizado');
+        $this->assertResponseStatusCodeSame(404, 'No se puede consultar las obras si no se esta autorizado');
 
         $this->createUserAndLogin($client, 'testuser', 'userpassword', 'Test User');
 

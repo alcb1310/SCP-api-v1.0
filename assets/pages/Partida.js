@@ -48,7 +48,7 @@ function Partida() {
       return part["@id"] === id;
     });
     setSelectedPartida(data);
-    // setIsEdit(true);
+    setIsEdit(true);
     setShowForm(true);
   }
 

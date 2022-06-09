@@ -67,7 +67,7 @@ class PartidaResourceTest extends CustomApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseStatusCodeSame(404);
 
         $this->logIn($client, 'testuser', 'foopassword');
 
@@ -78,7 +78,5 @@ class PartidaResourceTest extends CustomApiTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(200);
-
-
     }
 }

@@ -148,7 +148,6 @@ function PresupuestoForm(props) {
         <Col>
           <Label for="cantidad">Cantidad</Label>
           <Input
-            type="number"
             name="cantidad"
             id="cantidad"
             value={presupuesto.cantidad}
@@ -160,7 +159,6 @@ function PresupuestoForm(props) {
         <Col>
           <Label for="unitario">Unitario</Label>
           <Input
-            type="number"
             name="unitario"
             id="unitario"
             value={presupuesto.unitario}
